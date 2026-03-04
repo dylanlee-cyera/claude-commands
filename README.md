@@ -2,6 +2,8 @@
 
 Personal slash commands for Claude Code to streamline customer engagement workflows.
 
+OBJ: Automate the core loop: prepare → meet → capture → follow up.
+
 ## Available Commands
 
 ### `/cyera.prep`
