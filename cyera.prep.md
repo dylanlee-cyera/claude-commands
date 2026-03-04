@@ -17,7 +17,8 @@ Generate a comprehensive pre-meeting briefing for a customer by pulling data fro
 1. Fetches the customer's DataWatcher page (contacts, value statements, documentation)
 2. Queries recent Meeting Notes (last 30 days)
 3. Lists open Customer Tasks
-4. Searches Notion for other relevant docs
+4. Searches Salesforce for Positive Business Outcomes (PBOs)
+5. Searches Notion for other relevant docs
 
 ## Arguments
 
@@ -36,6 +37,7 @@ Usage: `/cyera.prep <customer-name>`
 
 This generates a pre-meeting briefing with:
 - Customer contacts and value statements
+- Salesforce Positive Business Outcomes (PBOs)
 - Recent meeting history (last 30 days)
 - Open tasks
 - Relevant Notion docs
@@ -95,13 +97,27 @@ ORDER BY "Priority" DESC
 
 Display task name, owner, priority, and status.
 
-### Step 4: Search for Related Docs
+### Step 4: Search Salesforce for Positive Business Outcomes
+
+Use `mcp__Notion__notion-search` with:
+- `query`: `<customer-name> Positive Business Outcomes`
+- `query_type`: "internal"
+
+Look for results from **Salesforce** connected source (type will show as Salesforce Opportunity). Extract PBOs from the search results - they typically describe business value realized from the deployment.
+
+If no Salesforce PBOs found, try searching for:
+- `<customer-name> business outcomes`
+- `<customer-name> value realized`
+
+Display the PBOs as bullet points showing the customer's achieved outcomes.
+
+### Step 5: Search for Related Docs
 
 Use `mcp__Notion__notion-search` with:
 - `query`: `<customer-name>`
 - `query_type`: "internal"
 
-Show top 5-10 relevant results (filter out Meeting Notes already shown).
+Show top 5-10 relevant results (filter out Meeting Notes and Salesforce records already shown).
 
 ## Output Format
 
@@ -125,6 +141,15 @@ Show top 5-10 relevant results (filter out Meeting Notes already shown).
 Why they bought DataWatcher:
 - <value statement 1>
 - <value statement 2>
+
+---
+
+## Positive Business Outcomes (from Salesforce)
+
+Business value realized:
+- <PBO 1 - e.g., accelerated AI innovation without data compromise>
+- <PBO 2 - e.g., reduced privacy risk and improved compliance>
+- <PBO 3 - e.g., operational efficiency gains>
 
 ---
 
