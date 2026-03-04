@@ -1,5 +1,5 @@
 ---
-description: Sync action items from recent Meeting Notes to Customer Tasks in Notion.
+description: Sync action items from recent Meeting Notes to Customer Tasks in your Mind Palace.
 ---
 
 ## User Input
@@ -19,13 +19,17 @@ This command extracts action items from your recent Meeting Notes and creates co
 3. Creates tasks in Customer Tasks with proper fields
 4. Links tasks back to source meetings
 5. Skips duplicates (checks if task already exists)
+6. Sends a summary to Slack (optional)
+
+## Configuration
+
+- **Slack Channel ID**: `C0AJL1QCKGA` (dylan-claude-notifications)
+- Set `SLACK_NOTIFICATION_CHANNEL` in your environment to customize
 
 ## Database IDs
 
-Update these to match your Notion workspace:
-
-- **Meeting Notes DB**: `collection://<your-meeting-notes-collection-id>`
-- **Customer Tasks DB**: `collection://<your-customer-tasks-collection-id>`
+- **Meeting Notes DB**: `collection://311afcab-7b49-8069-a646-000b374b1306`
+- **Customer Tasks DB**: `collection://313afcab-7b49-809f-9e46-000bd3a57795`
 
 ## Arguments
 
@@ -34,7 +38,7 @@ Update these to match your Notion workspace:
 | (none) | Process meetings from the last 24 hours |
 | `week` | Process meetings from the last 7 days |
 | `all` | Process all meetings with unprocessed action items |
-| `<name>` | Process meetings matching a specific name/customer |
+| `<meeting-name>` | Process a specific meeting by name |
 
 ## Execution Flow
 
@@ -43,7 +47,7 @@ Update these to match your Notion workspace:
 Use `mcp__Notion__notion-query-data-sources` to find recent meetings:
 
 ```sql
-SELECT * FROM "collection://<meeting-notes-id>"
+SELECT * FROM "collection://311afcab-7b49-8069-a646-000b374b1306"
 WHERE createdTime >= date('now', '-1 day')
 ORDER BY createdTime DESC
 ```
@@ -72,7 +76,7 @@ Parse each action item and extract:
 Before creating a task, query Customer Tasks to see if a similar task already exists:
 
 ```sql
-SELECT * FROM "collection://<customer-tasks-id>"
+SELECT * FROM "collection://313afcab-7b49-809f-9e46-000bd3a57795"
 WHERE "Task" LIKE '%<key words from action item>%'
 AND "Customer" = '<customer name>'
 ```
@@ -85,7 +89,7 @@ Use `mcp__Notion__notion-create-pages` with:
 
 ```json
 {
-  "parent": {"data_source_id": "<customer-tasks-collection-id>"},
+  "parent": {"data_source_id": "313afcab-7b49-809f-9e46-000bd3a57795"},
   "pages": [
     {
       "properties": {
@@ -101,6 +105,22 @@ Use `mcp__Notion__notion-create-pages` with:
   ]
 }
 ```
+
+### Customer Mapping
+
+Map Meeting Notes Customer values to Customer Tasks options:
+
+| Meeting Notes | Customer Tasks |
+|---------------|----------------|
+| Black & Veatch | Black & Veatch |
+| Mountain America CU | Mountain America CU |
+| Netflix | Netflix |
+| Ross | Ross |
+| Western Mutual | Western Mutual |
+| Internal | Internal |
+| Chep | CHEP |
+| 1:1 | Internal |
+| Brain | Internal |
 
 ### Priority Mapping
 
@@ -124,14 +144,47 @@ After processing, show a summary:
 
 | Customer | Task | Priority | Source Meeting |
 |----------|------|----------|----------------|
-| Acme Corp | Follow up on credentialing | High | Weekly Sync |
+| CHEP | Follow up on credentialing | High | CHEP Weekly |
+| Netflix | Review taxonomy mapping | Medium | Netflix - Taxonomy |
 ...
 
 ### Skipped (Already Exist):
 
-- "Send QBR slides" (Acme Corp) - exists
+- "Send QBR slides" (CHEP) - exists as task #123
 ...
 ```
+
+### Step 6: Send Slack Notification
+
+After completing the sync, send a summary message to Slack using the `/cyera.slack` command or the `cyera-slack.sh` script.
+
+**Slack Message Format:**
+```
+📋 *Meeting Notes Sync Complete*
+
+*Processed:* X meetings
+*Tasks Created:* Y new tasks
+*Skipped:* Z duplicates
+
+*New Tasks:*
+• [Customer] Task description (Priority)
+• [Customer] Task description (Priority)
+...
+
+_Run `/cyera.sync-meeting-tasks` to sync again_
+```
+
+**To send the notification**, use:
+```bash
+.claude/scripts/cyera-slack.sh send "C0AJL1QCKGA" "📋 *Meeting Notes Sync Complete*\n\n*Processed:* X meetings\n*Tasks Created:* Y new tasks"
+```
+
+Or if Slack isn't configured, skip this step silently and note in the output:
+```
+💡 Tip: Set up Slack with `/cyera.setup set up slack` to get notifications
+```
+
+---
 
 ## Error Handling
 
@@ -154,9 +207,12 @@ Notion not authenticated. Run `/mcp`, select Notion, and login.
 ```
 /cyera.sync-meeting-tasks          # Sync yesterday's meetings
 /cyera.sync-meeting-tasks week     # Sync last 7 days
+/cyera.sync-meeting-tasks CHEP     # Sync specific customer meetings
 ```
 
 ## Related Commands
 
-- Search and fetch Notion pages
-- Daily briefing including tasks
+- `/cyera.notion` - Search and fetch Notion pages
+- `/cyera.my-day` - Daily briefing including tasks
+- `/cyera.slack` - Send messages and search Slack
+- `/cyera.setup set up slack` - Configure Slack integration
