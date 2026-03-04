@@ -36,6 +36,13 @@ Generate a comprehensive pre-meeting briefing for a customer by pulling data fro
 - Key links (Slack channels, Drive folders, Notion pages)
 - Related documentation
 
+**Installation:**
+```bash
+# Download and install
+curl -o ~/.claude/commands/cyera.prep.md \
+  https://raw.githubusercontent.com/dylanlee-cyera/claude-commands/main/cyera.prep.md
+```
+
 ---
 
 ### `/cyera.sync-meeting-tasks`
@@ -60,6 +67,13 @@ Syncs action items from Meeting Notes to Customer Tasks in Notion.
   - Source Meeting relation link
 - Skips duplicates automatically
 
+**Installation:**
+```bash
+# Download and install
+curl -o ~/.claude/commands/cyera.sync-meeting-tasks.md \
+  https://raw.githubusercontent.com/dylanlee-cyera/claude-commands/main/cyera.sync-meeting-tasks.md
+```
+
 ---
 
 ## Requirements
@@ -69,16 +83,18 @@ Syncs action items from Meeting Notes to Customer Tasks in Notion.
 - Customer Tasks database
 - DataWatcher customer pages in Notion
 
-## Installation
-
-Copy any `.md` file to your `.claude/commands/` directory:
+## Install All Commands
 
 ```bash
-# Global installation (available in all projects)
-cp *.md ~/.claude/commands/
+# Create commands directory if it doesn't exist
+mkdir -p ~/.claude/commands
 
-# Project-specific installation
-cp *.md /path/to/your/project/.claude/commands/
+# Download all commands
+curl -o ~/.claude/commands/cyera.prep.md \
+  https://raw.githubusercontent.com/dylanlee-cyera/claude-commands/main/cyera.prep.md
+
+curl -o ~/.claude/commands/cyera.sync-meeting-tasks.md \
+  https://raw.githubusercontent.com/dylanlee-cyera/claude-commands/main/cyera.sync-meeting-tasks.md
 ```
 
 ## Database IDs
@@ -87,8 +103,8 @@ These commands use the following Notion databases:
 
 | Database | Collection ID |
 |----------|---------------|
-| Meeting Notes | **`collection://311afcab-7b49-8069-a646-000b374bXXXX` **|
-| Customer Tasks | **`collection://313afcab-7b49-809f-9e46-000bd3aXXXX` **|
+| Meeting Notes | **`collection://311afcab-7b49-8069-a646-000b374bXXXX`** |
+| Customer Tasks | **`collection://313afcab-7b49-809f-9e46-000bd3aXXXX`** |
 
 **Update this for your own inline Notion DB's**
 
