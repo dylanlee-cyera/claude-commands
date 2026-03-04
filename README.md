@@ -85,8 +85,10 @@ These commands use the following Notion databases:
 
 | Database | Collection ID |
 |----------|---------------|
-| Meeting Notes | `collection://311afcab-7b49-8069-a646-000b374b1306` |
-| Customer Tasks | `collection://313afcab-7b49-809f-9e46-000bd3a57795` |
+| Meeting Notes | **`collection://311afcab-7b49-8069-a646-000b374bXXXX` **|
+| Customer Tasks | **`collection://313afcab-7b49-809f-9e46-000bd3aXXXX` **|
+
+**Update this for your own inline Notion DB's**
 
 ## License
 
