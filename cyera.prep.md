@@ -43,7 +43,7 @@ This generates a pre-meeting briefing with:
 - Relevant Notion docs
 ```
 
-## Database IDs
+## Database IDs (Dylan Notion Mind Palace Specific ID's)
 
 - **Meeting Notes DB**: `collection://311afcab-7b49-8069-a646-000b374b1306`
 - **Customer Tasks DB**: `collection://313afcab-7b49-809f-9e46-000bd3a57795`
